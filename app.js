@@ -168,5 +168,49 @@ clearBtn.addEventListener('click', async () => {
     }
 });
 
+const obtenerDetalleSerie = async (id) => {
+    const url = `${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=es-ES`;
+    const respuesta = await fetch(url);
+    const datos = await respuesta.json();
+    return datos;
+};
+
+const mostrarModal = async (id) => {
+    try {
+        const serie = await obtenerDetalleSerie(id);
+        const { name, overview, number_of_seasons, number_of_episodes, genres, status } = serie;
+        const generosTexto = genres ? genres.map(g => g.name).join(', ') : 'N/A';
+
+        modalBody.innerHTML = `
+            <h2 class="modal__title">${name}</h2>
+            <div class="modal__info">
+                <span><strong>Temporadas:</strong> ${number_of_seasons}</span>
+                <span><strong>Episodios:</strong> ${number_of_episodes}</span>
+                <span><strong>Estado:</strong> ${status}</span>
+            </div>
+            <p><strong>Géneros:</strong> ${generosTexto}</p>
+            <p class="modal__overview">${overview || 'Sin descripción disponible.'}</p>
+        `;
+        modal.classList.add('modal--show');
+    } catch (error) {
+        console.log('Error', error);
+    }
+};
+
+seriesGrid.addEventListener('click', (e) => {
+    const tarjeta = e.target.closest('.serie-card');
+    if (tarjeta && tarjeta.dataset.id) {
+        mostrarModal(tarjeta.dataset.id);
+    }
+});
+
+modalClose.addEventListener('click', () => {
+    modal.classList.remove('modal--show');
+});
+
+modalOverlay.addEventListener('click', () => {
+    modal.classList.remove('modal--show');
+});
+
 // #                                                                          #
 // ############################################################################
