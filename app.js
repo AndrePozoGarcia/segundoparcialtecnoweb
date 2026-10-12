@@ -131,5 +131,42 @@ const crearTarjetaSerie = (serie) => {
     `;
 };
 
+const buscarSeries = async (query) => {
+    const url = `${BASE_URL}/search/tv?api_key=${API_KEY}&language=es-ES&query=${encodeURIComponent(query)}`;
+    const respuesta = await fetch(url);
+    const datos = await respuesta.json();
+    return datos.results;
+};
+
+searchInput.addEventListener('input', async (e) => {
+    const query = e.target.value;
+    if (!query.trim()) return;
+
+    mostrarLoading();
+    try {
+        const series = await buscarSeries(query);
+        ocultarLoading();
+        seriesGrid.innerHTML = series.map(crearTarjetaSerie).join('');
+        console.log(`${series.length} series encontradas`);
+    } catch (error) {
+        console.log('Error', error);
+        mostrarError('No se pudo realizar la búsqueda');
+    }
+});
+
+clearBtn.addEventListener('click', async () => {
+    searchInput.value = '';
+    mostrarLoading();
+    try {
+        const series = await obtenerSeriesPopulares();
+        ocultarLoading();
+        seriesGrid.innerHTML = series.map(crearTarjetaSerie).join('');
+        console.log('Series populares restauradas');
+    } catch (error) {
+        console.log('Error', error);
+        mostrarError('No se pudieron cargar las series');
+    }
+});
+
 // #                                                                          #
 // ############################################################################
