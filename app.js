@@ -111,5 +111,25 @@ try {
     mostrarError(mensaje);
 }
 
+const crearTarjetaSerie = (serie) => {
+    const { name, first_air_date, vote_average, poster_path } = serie;
+    const año = first_air_date ? first_air_date.split('-')[0] : 'N/A';
+    const imagen = poster_path ? IMAGE_URL + poster_path : '';
+    const rating = vote_average ? vote_average.toFixed(1) : 'N/A';
+
+    return `
+        <article class="serie-card">
+            <div class="serie-card__poster">
+                <img class="serie-card__image" src="${imagen}" alt="${name}">
+                <span class="serie-card__rating">${rating}</span>
+            </div>
+            <div class="serie-card__content">
+                <h3 class="serie-card__title">${name}</h3>
+                <p class="serie-card__year">${año}</p>
+            </div>
+        </article>
+    `;
+};
+
 // #                                                                          #
 // ############################################################################
